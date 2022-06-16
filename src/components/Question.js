@@ -1,16 +1,22 @@
 import React from 'react';
 
-export default function Question() {
+export default function Question(props) {
+  const buttonElements = props.question.answers.map( answer => {
+    return (
+      <button 
+        className="question__answerBtn"
+        key={props.question.answers.indexOf(answer)}
+      >
+        {answer}
+      </button>
+    );
+  });
+
   return (
     <section className="question">
-      <p>
-        How would one say goodbye in Spanish?
-      </p>
+      <p>{props.question.question}</p>
       <div className="question__answerContainer">
-        <button className="question__answerBtn question__answerBtn--selected">Adios</button>
-        <button className="question__answerBtn">Hola</button>
-        <button className="question__answerBtn">Au Revoir</button>
-        <button className="question__answerBtn">Salir</button>
+        {buttonElements}
       </div>
       <hr className="question__rule"></hr>
     </section>

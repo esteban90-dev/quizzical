@@ -11,7 +11,7 @@ body {
 }
 
 main {
-  max-width: 400px;
+  max-width: 500px;
   margin: 40px auto;
 }
 
@@ -36,6 +36,7 @@ main {
 .question__answerBtn {
   min-width: 65px;
   margin-right: 13px;
+  margin-top: 10px;
   padding: 4px 15px;
   border: 1px solid #4D5B9E;
   border-radius: 8px;
@@ -52,7 +53,8 @@ main {
 }
 
 .question__answerContainer {
-  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
   margin-bottom: 15px;
 }
 
