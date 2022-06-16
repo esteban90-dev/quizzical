@@ -2,10 +2,17 @@ import React from 'react';
 
 export default function Question(props) {
   const buttonElements = props.question.answers.map( answer => {
+    const answerIndex = props.question.answers.indexOf(answer);
+    const isSelected = props.question.selectedAnswers[answerIndex];
+
     return (
       <button 
-        className="question__answerBtn"
+        className={isSelected ? 
+          "question__answerBtn question__answerBtn--selected"
+            : 
+          "question__answerBtn"}
         key={props.question.answers.indexOf(answer)}
+        onClick={(event) => props.selectAnswer(event, props.question.id, answerIndex)}
       >
         {answer}
       </button>

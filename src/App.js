@@ -5,6 +5,7 @@ import blobBottomLeft from './images/blob-bottom-left.svg';
 
 export default function App() {
   const [questions, setQuestions] = React.useState([]);
+  const [selections, setSelections] = React.useState([]);
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
@@ -21,9 +22,11 @@ export default function App() {
     
     for (let i=0; i<questionData.length; i++) {
       questions.push({
+        id: i + 1,
         question: questionData[i].question,
         type: questionData[i].type,
         answers: questionData[i].incorrect_answers.concat(questionData[i].correct_answer),
+        selectedAnswers: Array(questionData[i].incorrect_answers.length + 1).fill(false),
         correct_answer: questionData[i].correct_answer,
       });
     }
@@ -36,8 +39,6 @@ export default function App() {
       question.answers = question.answers.map(answer => decode(answer));
       return question
     });
-    
-    console.log(decodedQuestions);
 
     return decodedQuestions;
   }
@@ -52,6 +53,22 @@ export default function App() {
       .replaceAll("&rdquo;", "\"");
   }
 
+  function selectAnswer(event, questionId, answerIndex) {
+    // update selectedAnswer array
+    setQuestions(prevQuestions => {
+      return prevQuestions.map( question => {
+        if (question.id === questionId) {
+          question.selectedAnswers.fill(false)
+          question.selectedAnswers[answerIndex] = true;
+          return question;
+        }
+        else {
+          return question;
+        }
+      });
+    });
+  }
+
   // only build question elements if there are questions,
   // i.e. after the fetch call is complete 
   // if no questions exist yet, set questionElements to an 
@@ -60,8 +77,9 @@ export default function App() {
   const questionElements = questions.length > 0 ? 
     questions.map( question => (
       <Question
-        key={questions.indexOf(question)}
+        key={question.id}
         question={question}
+        selectAnswer={selectAnswer}
       />
     ))
   : [];
