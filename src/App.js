@@ -5,7 +5,6 @@ import blobBottomLeft from './images/blob-bottom-left.svg';
 
 export default function App() {
   const [questions, setQuestions] = React.useState([]);
-  const [selections, setSelections] = React.useState([]);
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
@@ -26,7 +25,7 @@ export default function App() {
         question: questionData[i].question,
         type: questionData[i].type,
         answers: questionData[i].incorrect_answers.concat(questionData[i].correct_answer),
-        selectedAnswers: Array(questionData[i].incorrect_answers.length + 1).fill(false),
+        selectedAnswer: "",
         correct_answer: questionData[i].correct_answer,
       });
     }
@@ -53,17 +52,14 @@ export default function App() {
       .replaceAll("&rdquo;", "\"");
   }
 
-  function selectAnswer(event, questionId, answerIndex) {
-    // update selectedAnswer array
+  function selectAnswer(event, questionId) {
     setQuestions(prevQuestions => {
-      return prevQuestions.map( question => {
-        if (question.id === questionId) {
-          question.selectedAnswers.fill(false)
-          question.selectedAnswers[answerIndex] = true;
-          return question;
+      return prevQuestions.map(prevQuestion => {
+        if (prevQuestion.id === questionId) {
+          return {...prevQuestion, selectedAnswer: event.target.innerHTML};
         }
         else {
-          return question;
+          return prevQuestion;
         }
       });
     });
