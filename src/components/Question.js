@@ -5,8 +5,8 @@ export default function Question(props) {
     let buttonClass = "question__answerBtn";
 
     // --- determine color of answer button ---
-    // if quiz complete
-    if (props.quizIsComplete) {
+    // quiz complete
+    if (props.quizStatus === 'complete') {
       // make the button green if selected
       if (answer === props.question.selectedAnswer) {
         buttonClass = buttonClass.concat(" question__answerBtn--correct");
@@ -28,7 +28,7 @@ export default function Question(props) {
 
     // quiz not complete
     // make the button darker if quiz not complete and selected
-    if (!props.quizIsComplete) {
+    if (props.quizStatus !== 'complete') {
       if (answer === props.question.selectedAnswer) {
         buttonClass = buttonClass.concat(" question__answerBtn--selected");
       }
@@ -38,7 +38,7 @@ export default function Question(props) {
       <button 
         className={buttonClass}
         key={props.question.answers.indexOf(answer)}
-        onClick={!props.quizIsComplete ? 
+        onClick={props.quizStatus!== 'complete' ? 
           ((event) => props.selectAnswer(event, props.question.id, props.question.answers.indexOf(answer)))
           : undefined
         }

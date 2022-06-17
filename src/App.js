@@ -5,21 +5,19 @@ import blobBottomLeft from './images/blob-bottom-left.svg';
 
 export default function App() {
   const [questions, setQuestions] = React.useState([]);
-  const [quizIsComplete, setQuizIsComplete] = React.useState(false);
-  const [reset, setReset] = React.useState(true);
+  // quizStatus can either be 'not started', 'started', or 'complete'
+  const [quizStatus, setQuizStatus] = React.useState('not started');
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
   React.useEffect(() => {
-    // added conditional so the fetch call only runs
-    // when reset changes from false -> true
-    if (reset) {
+    // only run fetch call when quizStatus changes to 'started'
+    if (quizStatus === 'started') {
       fetch('https://opentdb.com/api.php?amount=5')
         .then( res => res.json())
         .then( json => setQuestions(buildQuestions(json.results)));
     }
-    setReset(false);
-  }, [reset]);
+  }, [quizStatus]);
 
   function shuffle(arr) {
     // return a randomly shuffled array
@@ -92,11 +90,11 @@ export default function App() {
   }
 
   function scoreQuiz() {
-    setQuizIsComplete(true);
+    setQuizStatus('complete');
   }
 
   function numCorrectAnswers() {
-    if (!quizIsComplete) {
+    if (quizStatus !== 'complete') {
       return undefined;
     }
     else {
@@ -107,12 +105,15 @@ export default function App() {
   }
 
   function playAgain() {
-    setQuizIsComplete(false);
-    setReset(true);
+    setQuizStatus('started');
+  }
+
+  function startQuiz() {
+    setQuizStatus('started');
   }
 
   // only build question elements if there are questions,
-  // i.e. after the fetch call is complete 
+  // i.e. after the quiz is started and the fetch call is complete 
   // if no questions exist yet, set questionElements to an 
   // empty array
 
@@ -121,7 +122,7 @@ export default function App() {
       <Question
         key={question.id}
         question={question}
-        quizIsComplete={quizIsComplete}
+        quizStatus={quizStatus}
         selectAnswer={selectAnswer}
       />
     ))
@@ -131,19 +132,35 @@ export default function App() {
     <main>
       <img src={blobTopRight} className="blobTopRight" alt="this is a yellow blob"></img>
       <img src={blobBottomLeft} className="blobBottomLeft" alt="this is a blue blob"></img>
-      {questionElements}
-      <div>
+      
+      
+      {quizStatus === 'not started' && 
+        <section className="title__container">
+          <h1 className="title__heading">Quizzical</h1>
+          <p className="title__description">Quiz yourself on random trivia questions</p>
+          <button className="quiz__startBtn" onClick={startQuiz}>Start Quiz</button>
+        </section>
+        
+      }
 
-      </div>
-      {quizIsComplete ? 
-        <div className="quiz__scoreContainer">
-          <p>You scored {numCorrectAnswers()}/{questions.length} correct answers</p>
-          <button className="quiz__playBtn" onClick={playAgain}>Play again</button>
-        </div>
-        :
-        <div className="quiz__scoreContainer">
-          <button className="quiz__scoreBtn" onClick={scoreQuiz}>Check answers</button>
-        </div>
+      {(quizStatus === 'started' && questionElements.length > 0) &&
+        <section className="quiz__container">
+          {questionElements}
+          <div className="quiz__scoreContainer">
+            <button className="quiz__scoreBtn" onClick={scoreQuiz}>Check answers</button>
+          </div>
+        </section>
+      }
+
+      {quizStatus === 'complete' &&
+        <section className="quiz__container">
+          {questionElements}
+          <div className="quiz__scoreContainer">
+            <p>You scored {numCorrectAnswers()}/{questions.length} correct answers</p>
+            <button className="quiz__playAgainBtn" onClick={playAgain}>Play again</button>
+          </div>
+        </section>
+        
       }
     </main>
   )
