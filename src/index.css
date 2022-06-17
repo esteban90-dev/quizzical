@@ -52,6 +52,18 @@ main {
   background-color: #D6DBF5; 
 }
 
+.question__answerBtn--correct {
+  background-color: #94D7A2;
+}
+
+.question__answerBtn--incorrect {
+  background-color: #F8BCBC;
+}
+
+.question__answerBtn--dim {
+  opacity: 50%;
+}
+
 .question__answerContainer {
   display: flex;
   flex-wrap: wrap;
@@ -63,4 +75,28 @@ main {
   border-top: 1px;
   border-left: none;
   border-right: none;
+}
+
+.quiz__scoreBtn, .quiz__playBtn {
+  display: block;
+  padding: 10px 21px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  background-color: #4D5B9E;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.quiz__playBtn {
+  margin-left: 20px;
+}
+
+.quiz__scoreContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px;
 }

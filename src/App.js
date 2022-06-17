@@ -5,6 +5,7 @@ import blobBottomLeft from './images/blob-bottom-left.svg';
 
 export default function App() {
   const [questions, setQuestions] = React.useState([]);
+  const [quizIsComplete, setQuizIsComplete] = React.useState(false);
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
@@ -13,6 +14,25 @@ export default function App() {
       .then( res => res.json())
       .then( json => setQuestions(buildQuestions(json.results)));
   }, []);
+
+  function shuffle(arr) {
+    // return a randomly shuffled array
+    let prevArr = arr.slice(0);
+    const newArr = [];
+
+    while (prevArr.length > 0) {
+      // 1. get a random index in the array
+      let randomIndex = parseInt(Math.random() * prevArr.length);
+
+      // 2. push value at random index into new array
+      newArr.push(prevArr[randomIndex]);
+
+      // 3. filter prev array to exclude chosen random index
+      prevArr = prevArr.filter((item, index) => index !== randomIndex);
+    }
+    
+    return newArr;
+  }
 
   function buildQuestions(questionData) {
     // build question objects from api data
@@ -24,7 +44,7 @@ export default function App() {
         id: i + 1,
         question: questionData[i].question,
         type: questionData[i].type,
-        answers: questionData[i].incorrect_answers.concat(questionData[i].correct_answer),
+        answers: shuffle(questionData[i].incorrect_answers.concat(questionData[i].correct_answer)),
         selectedAnswer: "",
         correct_answer: questionData[i].correct_answer,
       });
@@ -52,17 +72,32 @@ export default function App() {
       .replaceAll("&rdquo;", "\"");
   }
 
-  function selectAnswer(event, questionId) {
+  function selectAnswer(event, questionId, answerId) {
     setQuestions(prevQuestions => {
       return prevQuestions.map(prevQuestion => {
         if (prevQuestion.id === questionId) {
-          return {...prevQuestion, selectedAnswer: event.target.innerHTML};
+          return {...prevQuestion, selectedAnswer: prevQuestion.answers[answerId]};
         }
         else {
           return prevQuestion;
         }
       });
     });
+  }
+
+  function scoreQuiz() {
+    setQuizIsComplete(true);
+  }
+
+  function numCorrectAnswers() {
+    if (!quizIsComplete) {
+      return undefined;
+    }
+    else {
+      return questions.filter(
+        question => question.selectedAnswer === question.correct_answer
+      ).length;
+    }
   }
 
   // only build question elements if there are questions,
@@ -75,6 +110,7 @@ export default function App() {
       <Question
         key={question.id}
         question={question}
+        quizIsComplete={quizIsComplete}
         selectAnswer={selectAnswer}
       />
     ))
@@ -85,6 +121,20 @@ export default function App() {
       <img src={blobTopRight} className="blobTopRight" alt="this is a yellow blob"></img>
       <img src={blobBottomLeft} className="blobBottomLeft" alt="this is a blue blob"></img>
       {questionElements}
+      <div>
+
+      </div>
+      {quizIsComplete ? 
+        <div className="quiz__scoreContainer">
+          <p>You scored {numCorrectAnswers()}/{questions.length} correct answers</p>
+          <button className="quiz__playBtn">Play again</button>
+        </div>
+        :
+        <div className="quiz__scoreContainer">
+          <button className="quiz__scoreBtn" onClick={scoreQuiz}>Check answers</button>
+        </div>
+        
+      }
     </main>
   )
 }
