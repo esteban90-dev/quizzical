@@ -5,6 +5,14 @@ export default function Question(props) {
     let buttonClass = "question__answerBtn";
 
     // --- determine color of answer button ---
+        // quiz started
+    // make the button darker if quiz not complete and selected
+    if (props.quizStatus === 'started') {
+      if (answer === props.question.selectedAnswer) {
+        buttonClass = buttonClass.concat(" question__answerBtn--selected");
+      }
+    }
+
     // quiz complete
     if (props.quizStatus === 'complete') {
       // make the button green if selected
@@ -23,14 +31,6 @@ export default function Question(props) {
       // otherwise, just make button dim
       else {
         buttonClass = buttonClass.concat(" question__answerBtn--dim");
-      }
-    }
-
-    // quiz not complete
-    // make the button darker if quiz not complete and selected
-    if (props.quizStatus !== 'complete') {
-      if (answer === props.question.selectedAnswer) {
-        buttonClass = buttonClass.concat(" question__answerBtn--selected");
       }
     }
 

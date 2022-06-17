@@ -38,7 +38,8 @@ main {
 
 .quiz__container {
   max-width: 500px;
-  margin: 30px auto 0 auto;
+  margin: 0 auto;
+  padding: 30px 0;
 }
 
 .title__heading {
@@ -133,4 +134,8 @@ main {
   align-items: center;
   justify-content: space-around;
   margin: 20px;
+}
+
+.error__description {
+  color: red;
 }

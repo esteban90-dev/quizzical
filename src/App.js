@@ -7,6 +7,7 @@ export default function App() {
   const [questions, setQuestions] = React.useState([]);
   // quizStatus can either be 'not started', 'started', or 'complete'
   const [quizStatus, setQuizStatus] = React.useState('not started');
+  const [fetchError, setFetchError] = React.useState(false);
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
@@ -15,7 +16,11 @@ export default function App() {
     if (quizStatus === 'started') {
       fetch('https://opentdb.com/api.php?amount=5')
         .then( res => res.json())
-        .then( json => setQuestions(buildQuestions(json.results)));
+        .then( json => setQuestions(buildQuestions(json.results)))
+        .catch( error => {
+          console.log(error);
+          setFetchError(true);
+        });
     }
   }, [quizStatus]);
 
@@ -152,6 +157,14 @@ export default function App() {
         </section>
       }
 
+      {(quizStatus === 'started' && fetchError) &&
+        <section className="quiz__container">
+          <p className="error__description">
+            There was an error getting quiz questions.  Reload the page.
+          </p>
+        </section>
+      }
+
       {quizStatus === 'complete' &&
         <section className="quiz__container">
           {questionElements}
@@ -160,7 +173,6 @@ export default function App() {
             <button className="quiz__playAgainBtn" onClick={playAgain}>Play again</button>
           </div>
         </section>
-        
       }
     </main>
   )
