@@ -6,14 +6,20 @@ import blobBottomLeft from './images/blob-bottom-left.svg';
 export default function App() {
   const [questions, setQuestions] = React.useState([]);
   const [quizIsComplete, setQuizIsComplete] = React.useState(false);
+  const [reset, setReset] = React.useState(true);
 
   // on initial render of App, fetch 5 questions from open trivia db
   // and store them in questions state variable
   React.useEffect(() => {
-    fetch('https://opentdb.com/api.php?amount=5')
-      .then( res => res.json())
-      .then( json => setQuestions(buildQuestions(json.results)));
-  }, []);
+    // added conditional so the fetch call only runs
+    // when reset changes from false -> true
+    if (reset) {
+      fetch('https://opentdb.com/api.php?amount=5')
+        .then( res => res.json())
+        .then( json => setQuestions(buildQuestions(json.results)));
+    }
+    setReset(false);
+  }, [reset]);
 
   function shuffle(arr) {
     // return a randomly shuffled array
@@ -100,6 +106,11 @@ export default function App() {
     }
   }
 
+  function playAgain() {
+    setQuizIsComplete(false);
+    setReset(true);
+  }
+
   // only build question elements if there are questions,
   // i.e. after the fetch call is complete 
   // if no questions exist yet, set questionElements to an 
@@ -127,13 +138,12 @@ export default function App() {
       {quizIsComplete ? 
         <div className="quiz__scoreContainer">
           <p>You scored {numCorrectAnswers()}/{questions.length} correct answers</p>
-          <button className="quiz__playBtn">Play again</button>
+          <button className="quiz__playBtn" onClick={playAgain}>Play again</button>
         </div>
         :
         <div className="quiz__scoreContainer">
           <button className="quiz__scoreBtn" onClick={scoreQuiz}>Check answers</button>
         </div>
-        
       }
     </main>
   )
