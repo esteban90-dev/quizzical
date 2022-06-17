@@ -69,7 +69,7 @@ main {
   font-weight: 500;
 }
 
-.quiz__answerBtn {
+.question__answerBtn {
   margin-right: 13px;
   margin-top: 10px;
 }
