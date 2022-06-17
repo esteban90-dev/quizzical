@@ -110,6 +110,7 @@ export default function App() {
   }
 
   function playAgain() {
+    setQuestions([]);
     setQuizStatus('started');
   }
 
